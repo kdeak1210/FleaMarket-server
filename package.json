@@ -25,8 +25,12 @@
     "bcrypt": "^1.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
+    "client-sessions": "^0.8.0",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^5.0.0",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.1",
-    "mongoose": "^5.0.3"
+    "mongoose": "^5.0.3",
+    "morgan": "^1.9.0"
   }
 }
