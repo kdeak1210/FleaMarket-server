@@ -5,9 +5,11 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import session from 'client-sessions';
 import logger from 'morgan';
+import cors from 'cors';
 import mongoose from 'mongoose';
 
-import api from './routes/api';
+import account from './routes/account';
+// import api from './routes/api';
 
 const app = express();
 
@@ -17,6 +19,7 @@ mongoose.connect(process.env.DB_URL || 'mongodb://localhost/fleamarket')
   .catch(err => console.log(err));
 
 // Middleware Configuration
+app.use(cors('*'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -29,6 +32,8 @@ app.use(session({
 app.use(logger('dev'));
 // app.use(express.static(path.join(__dirname, 'public')));
 
+// Routes / Express Router
+app.use('/account', account);
 // app.use('/api', api);
 
 app.get('/', (req, res) => {
