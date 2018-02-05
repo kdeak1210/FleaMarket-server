@@ -2,8 +2,6 @@ import './config';
 import express from 'express';
 // import path from 'path';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import session from 'client-sessions';
 import logger from 'morgan';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -19,16 +17,9 @@ mongoose.connect(process.env.DB_URL || 'mongodb://localhost/fleamarket')
   .catch(err => console.log(err));
 
 // Middleware Configuration
-app.use(cors('*'));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(session({
-  cookieName: 'session',
-  secret: process.env.SESSION_SECRET,
-  duration: 24 * 60 * 60 * 1000, // 1 day
-  activeDuration: 30 * 60 * 1000,
-}));
 app.use(logger('dev'));
 // app.use(express.static(path.join(__dirname, 'public')));
 

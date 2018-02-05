@@ -49,10 +49,11 @@ export default {
     });
   }),
 
-  create: (params, isRaw) => new Promise((resolve, reject) => {
-    // Hash the password w/ bcrypt
+  create: (params, isRaw) => new Promise(async (resolve, reject) => {
+    // Hash the password w/ bcrypt async
     if (params.password) {
-      params.password = bcrypt.hash(params.password, 10);
+      const hashedPassword = await bcrypt.hash(params.password, 10);
+      params.password = hashedPassword;
     }
 
     Profile.create(params, (err, profile) => {

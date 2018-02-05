@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import controllers from '../controllers';
+import { generateToken } from '../utils/auth';
 
 // import { Router as router } from 'express'
 const router = express.Router();
@@ -11,45 +12,28 @@ router.get('/:action', (req, res) => {
   const { action } = req.params;
 
   if (action === 'currentuser') {
-    // Check if there is an active session
-    if (req.session == null) {
-      res.json({
-        confirmation: 'success',
-        user: null,
+    // Look for a token in request body / URL params
+    const { token } = req.body || req.query;
+    if (!token) {
+      return res.status(401).json({
+        confirmation: 'fail',
+        message: 'Must pass token',
       });
-
-      return;
     }
 
-    // There is an active session - check if theres a token
-    if (req.session.token == null) {
-      res.json({
-        confirmation: 'success',
-        user: null,
-      });
+    // Verify token, decoding w/ secret
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+      if (err) throw err;
 
-      return;
-    }
-
-    // Verify token, if valid send back the current user's id
-    jwt.verify(req.session.token, process.env.TOKEN_SECRET, (err, decoded) => {
-      if (err) {
-        // Invalid token - log them out and start it over
-        req.session.reset();
-        res.json({
-          confirmation: 'fail',
-          user: null,
-        });
-
-        return;
-      }
-
+      // Return the user from their id in the JWT (& the token itself)
       controllers.profile
         .getById(decoded.id, false)
-        .then((result) => {
+        .then((profile) => {
+          // Optional - Can refresh the token here
           res.json({
             confirmation: 'success',
-            user: result,
+            user: profile,
+            token,
           });
         })
         .catch((error) => {
@@ -61,32 +45,28 @@ router.get('/:action', (req, res) => {
     });
   }
 
-  if (action === 'logout') {
-    // Process logout
-    req.session.reset();
-    res.json({
-      confirmation: 'success',
-      user: null,
-    });
-  }
+  // if (action === 'logout') {
+  //   // Process logout
+  //   req.session.reset();
+  //   res.json({
+  //     confirmation: 'success',
+  //     user: null,
+  //   });
+  // }
 });
 
 router.post('/:action', (req, res) => {
   const { action } = req.params;
 
   if (action === 'register') {
-    // Process register
-
     controllers.profile
       .create(req.body, false)
-      .then((result) => {
-      // Create a token object on the session
-        const token = jwt.sign({ id: result.id }, process.env.TOKEN_SECRET, { expiresIn: 5000 });
-        req.session.token = token;
-
+      .then((profile) => {
+        // Create a token object on the session
+        const token = generateToken(profile);
         res.json({
           confirmation: 'success',
-          user: result,
+          user: profile,
           token,
         });
       })
@@ -99,29 +79,26 @@ router.post('/:action', (req, res) => {
   }
 
   if (action === 'login') {
-    // Process login
     const candidate = req.body;
 
     controllers.profile
       .get({ email: candidate.email }, true)
-      .then((results) => {
+      .then(async (results) => {
         if (results.length === 0) {
           throw new Error('User was not found'); // Sends error to catch
         }
-        const profile = results[0];
-        const isPasswordMatch = bcrypt.compare(candidate.password, profile.password);
 
+        const profile = results[0];
+        const isPasswordMatch = await bcrypt.compare(candidate.password, profile.password);
         if (!isPasswordMatch) {
           throw new Error('Incorrect Password'); // Sends error to catch
         }
 
-        // Create a token object on the session
-        const token = jwt.sign({ id: profile._id }, process.env.TOKEN_SECRET, { expiresIn: 5000 });
-        req.session.token = token;
-
+        const token = generateToken(profile);
         res.json({
           confirmation: 'success',
           user: profile.summary(),
+          token,
         });
       })
       .catch((err) => {
