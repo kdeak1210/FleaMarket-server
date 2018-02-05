@@ -22,6 +22,7 @@
     "nodemon": "^1.14.12"
   },
   "dependencies": {
+    "aws-sdk": "^2.189.0",
     "bcrypt": "^1.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",

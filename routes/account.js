@@ -13,9 +13,11 @@ router.get('/:action', (req, res) => {
 
   if (action === 'currentuser') {
     // Look for a token in request body / URL params
-    const { token } = req.body || req.query;
+    // NOTE destructuring token here w || statement doesnt work as intended
+    const token = req.body.token || req.query.token;
+
     if (!token) {
-      return res.status(401).json({
+      return res.json({
         confirmation: 'fail',
         message: 'Must pass token',
       });
@@ -30,6 +32,7 @@ router.get('/:action', (req, res) => {
         .getById(decoded.id, false)
         .then((profile) => {
           // Optional - Can refresh the token here
+          // Optional - if user is not found, don't bother returning token
           res.json({
             confirmation: 'success',
             user: profile,
