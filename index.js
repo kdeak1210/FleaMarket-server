@@ -7,6 +7,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 
 import account from './routes/account';
+import upload from './routes/upload';
 // import api from './routes/api';
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(logger('dev'));
 
 // Routes / Express Router
 app.use('/account', account);
+app.use('/upload', upload);
 // app.use('/api', api);
 
 app.get('/', (req, res) => {

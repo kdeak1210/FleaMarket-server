@@ -10,13 +10,18 @@ const router = express.Router();
 
 router.get('/s3sign', (req, res) => {
   const { filename, filetype } = req.query;
-  const s3 = new aws.S3();
+
+  const s3 = new aws.S3({
+    signatureVersion: 'v4',
+    region: process.env.AWS_REGION,
+  });
 
   const params = {
-    Bucket: '',
+    Bucket: process.env.AWS_BUCKET_NAME,
     Key: filename,
     Expires: 60,
     ContentType: filetype,
+    ACL: 'public-read',
   };
 
   s3.getSignedUrl('putObject', params, (err, data) => {
@@ -26,11 +31,22 @@ router.get('/s3sign', (req, res) => {
         confirmation: 'fail',
         message: err,
       });
+
+      return;
     }
+
+    // The URL where the image will be located after successful upload
+    // const imageUrl = `
+    //   https://${process.env.AWS_BUCKET_NAME}
+    //   .s3
+    //   .${process.env.AWS_REGION}
+    //   .amazonaws.com/${filename}
+    // `;
 
     res.json({
       confirmation: 'success',
-      result: data,
+      signedUrl: data,
+      // imageUrl,
     });
   });
 });
