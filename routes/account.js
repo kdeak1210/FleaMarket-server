@@ -17,7 +17,7 @@ router.get('/:action', (req, res) => {
     const token = req.body.token || req.query.token;
 
     if (!token) {
-      return res.json({
+      res.json({
         confirmation: 'fail',
         message: 'Must pass token',
       });
