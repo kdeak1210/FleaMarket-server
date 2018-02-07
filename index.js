@@ -10,6 +10,7 @@ import bluebird from 'bluebird';
 import account from './routes/account';
 import api from './routes/api';
 import upload from './routes/upload';
+import email from './routes/email';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(logger('dev'));
 app.use('/account', account);
 app.use('/api', api);
 app.use('/upload', upload);
+app.use('/email', email);
 
 app.get('/', (req, res) => {
   res.send('Hello World');
