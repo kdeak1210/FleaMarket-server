@@ -1,62 +1,63 @@
+import Order from '../models/Order';
 import Promise from 'bluebird';
-import Item from '../models/Item';
 
-// Export a series of functions dealing w/ CRUD operations on Item resources
+// Export a series of CRUD operations on Order resources
 export default {
 
   get: (params, isRaw) => new Promise((resolve, reject) => {
-    Item.find(params, (err, items) => {
+    Order.find(params, (err, orders) => {
       if (err) {
         reject(err);
         return;
       }
 
       if (isRaw) {
-        resolve(items);
+        resolve(orders);
       } else {
         const list = [];
-        items.forEach(item => list.push(item.summary()));
+        orders.forEach(order => list.push(order.summary()));
         resolve(list);
       }
     });
   }),
 
   getById: (id, isRaw) => new Promise((resolve, reject) => {
-    Item.findById(id, (err, item) => {
+    Order.findById(id, (err, order) => {
       if (err) {
         reject(err);
         return;
       }
 
       if (isRaw) {
-        resolve(item);
+        resolve(order);
       } else {
-        resolve(item.summary());
+        resolve(order.summary());
       }
     });
   }),
 
   create: (params, isRaw) => new Promise((resolve, reject) => {
-    Item.create(params, (err, item) => {
+    Order.create(params, (err, order) => {
       if (err) {
         reject(err);
         return;
       }
 
       if (isRaw) {
-        resolve(item);
+        resolve(order);
       } else {
-        resolve(item.summary());
+        resolve(order.summary());
       }
     });
   }),
 
-  // update: (id, params, isRaw) => {
+  // update: (id, params, isRaw) => Promise((resolve, reject) => {
 
-  // },
+  // }),
 
-  // destroy: (id, isRaw) => {
+  // destroy: (id, isRaw) => Promise((resolve, reject) => {
 
-  // },
+  // }),
 
 };
+

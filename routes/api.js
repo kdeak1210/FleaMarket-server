@@ -10,7 +10,7 @@ router.get('/:resource/', (req, res) => {
   if (!controller) {
     res.json({
       confirmation: 'fail',
-      message: `Requested resource ${resource} is not available`,
+      message: `Requested resource '${resource}' is not available`,
     });
 
     return;
@@ -38,7 +38,7 @@ router.get('/:resource/:id', (req, res) => {
   if (!controller) {
     res.json({
       confirmation: 'fail',
-      message: `Requested resource ${resource} is not available`,
+      message: `Requested resource '${resource}' is not available`,
     });
 
     return;
@@ -67,7 +67,7 @@ router.post('/:resource', (req, res) => {
   if (!controller) {
     res.json({
       confirmation: 'fail',
-      message: `Requested resource ${resource} is not available`,
+      message: `Requested resource '${resource}' is not available`,
     });
 
     return;

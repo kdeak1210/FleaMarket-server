@@ -21,9 +21,7 @@ export default {
         resolve(profiles);
       } else {
         const list = [];
-        profiles.forEach((profile) => {
-          list.push(profile.summary());
-        });
+        profiles.forEach(profile => list.push(profile.summary()));
         resolve(list);
       }
     });

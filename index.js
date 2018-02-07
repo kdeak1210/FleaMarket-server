@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import bluebird from 'bluebird';
 
 import account from './routes/account';
 import api from './routes/api';
@@ -13,6 +14,7 @@ import upload from './routes/upload';
 const app = express();
 
 // Connect to MongoDB via Mongoose ODM
+mongoose.Promise = bluebird;
 mongoose.connect(process.env.DB_URL || 'mongodb://localhost/fleamarket')
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.log(err));
