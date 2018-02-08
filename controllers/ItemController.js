@@ -5,7 +5,25 @@ import Item from '../models/Item';
 export default {
 
   get: (params, isRaw) => new Promise((resolve, reject) => {
-    Item.find(params, (err, items) => {
+    // Presence of lat and lng indicates a geospatial request
+    if (params.lat && params.lng) {
+      const range = 50 / 6371; // (6371 radius of Earth in km)
+      params.geo = {
+        // $ indicates a feature of mongoose
+        $near: [params.lat, params.lng],
+        $maxDistance: range,
+      };
+
+      // Remove params, else query looks for posts w/ specifically these key values
+      delete params.lat;
+      delete params.lng;
+    }
+
+    const filters = {
+      sort: { timestamp: -1 },
+    };
+
+    Item.find(params, null, filters, (err, items) => {
       if (err) {
         reject(err);
         return;
