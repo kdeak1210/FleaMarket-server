@@ -7,7 +7,7 @@ export default {
   get: (params, isRaw) => new Promise((resolve, reject) => {
     // Presence of lat and lng indicates a geospatial request
     if (params.lat && params.lng) {
-      const range = 85 / 6371; // (6371 radius of Earth in km)
+      const range = 92 / 6371; // (6371 radius of Earth in km)
       params.geo = {
         // $ indicates a feature of mongoose
         $near: [params.lat, params.lng],
