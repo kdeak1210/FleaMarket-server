@@ -88,4 +88,33 @@ router.post('/:resource', (req, res) => {
     });
 });
 
+// router.put('/:resource/:id', (req, res) => {}),
+
+router.delete('/:resource/:id', (req, res) => {
+  const { resource, id } = req.params;
+  const controller = controllers[resource];
+
+  if (!controller) {
+    res.json({
+      confirmation: 'fail',
+      message: `Requested resource '${resource}' is not available`,
+    });
+
+    return;
+  }
+
+  controller.destroy(id, false)
+    .then((result) => {
+      res.json({
+        confirmation: 'success',
+        result,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        confirmation: 'fail',
+        message: err,
+      });
+    });
+});
 export default router;
